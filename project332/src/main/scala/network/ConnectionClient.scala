@@ -27,7 +27,7 @@ class ConnectionClient (ipAdd:String,port:Int) {
     try {
       val response = blockingStub.connect(request)
       if (response.isSuccess==true)
-        {logger.info("Client -server connection is completed")
+        {logger.info("Client - server connection is completed")
         }
       else
         {
