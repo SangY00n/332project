@@ -18,9 +18,9 @@ object ConnectionClient {
   }
 
   def main(args: Array[String]): Unit = {
-    val client = ConnectionClient()
+    val client = ConnectionClient("localhost", 50051)
     try {
-        client.connectToServer(i);
+        client.connectToServer("1",50051)
     } finally {
       client.shutdown()
     }
@@ -43,7 +43,7 @@ class ConnectionClient private(
     val request =ConnectRequest(ipAdd, port)
     try {
       val response = blockingStub.connect(request)
-      logger.info("Greeting: " + response.message)
+      logger.info("Client -server connection is completed with result " + response.isSuccess)
     }
     catch {
       case e: StatusRuntimeException =>
