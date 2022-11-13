@@ -10,29 +10,12 @@ import java.util.logging.{Level, Logger}
 /**
  * [[https://github.com/grpc/grpc-java/blob/v0.15.0/examples/src/main/java/io/grpc/examples/helloworld/HelloWorldClient.java]]
  */
-object ConnectionClient {
-  def apply(host: String, port: Int): ConnectionClient = {
-    val channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build
-    val blockingStub = ConnectorGrpc.blockingStub(channel)
-    new ConnectionClient(channel, blockingStub)
-  }
 
-  def main(args: Array[String]): Unit = {
-    val client = ConnectionClient("localhost", 50051)
-    try {
-        client.connectToServer("1",50051)
-    } finally {
-      client.shutdown()
-    }
-  }
-}
+class ConnectionClient (ipAdd:String,port:Int) {
 
-class ConnectionClient private(
-                                private val channel: ManagedChannel,
-                                private val blockingStub: ConnectorBlockingStub
-                              ) {
-  private[this] val logger = Logger.getLogger(classOf[ConnectionClient].getName)
-
+  val logger = Logger.getLogger(classOf[ConnectionClient].getName)
+  val channel = ManagedChannelBuilder.forAddress(ipAdd, port).usePlaintext().build
+  val blockingStub = ConnectorGrpc.blockingStub(channel)
   def shutdown(): Unit = {
     channel.shutdown.awaitTermination(5, TimeUnit.SECONDS)
   }
@@ -43,7 +26,13 @@ class ConnectionClient private(
     val request =ConnectRequest(ipAdd, port)
     try {
       val response = blockingStub.connect(request)
-      logger.info("Client -server connection is completed with result " + response.isSuccess)
+      if (response.isSuccess==true)
+        {logger.info("Client -server connection is completed")
+        }
+      else
+        {
+          logger.info("failed to connection")
+        }
     }
     catch {
       case e: StatusRuntimeException =>
