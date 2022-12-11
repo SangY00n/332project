@@ -52,7 +52,7 @@ class NetworkServer(executionContext: ExecutionContext, port:Int, workerNum: Int
         server.shutdownNow() //fail shutdown while 5 seconds, shutdown now
       }
     }
-    if (serverDir != null) FileIO.deleteDir(serverDir)
+    //if (serverDir != null) FileIO.deleteDir(serverDir)
   }
 
   def waitUntilShutdown(): Unit = {
@@ -155,6 +155,7 @@ class NetworkServer(executionContext: ExecutionContext, port:Int, workerNum: Int
         def convertWorkersTOMessage(): Seq[workerInfo] = {
           (workers map {case (id, worker) => WorkerData.workerDataToMessage(worker)}).toSeq
         }
+        logger.info(s"[divide] Send to Worker${request.workerId} and the range: ${convertWorkersTOMessage}")
         Future.successful(new DivideResponse(Stat.SUCCESS, workerNum, convertWorkersTOMessage))
       }
       case FAILED => Future.failed(new Exception("[divide] Fail to dividing"))
